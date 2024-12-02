@@ -1,9 +1,7 @@
 package prakinglot.api;
 
 import prakinglot.enties.ParkingSpot;
-import prakinglot.enties.ParkingType;
 import prakinglot.enties.Vehicle;
-import prakinglot.enties.VehicleType;
 
 import java.util.Objects;
 
@@ -32,7 +30,7 @@ public class EntryServiceImpl implements EntyService {
 
         vehicle.parkingSpot = parkingSpot;
 
-        parkingSpot.isAvailable = false;
+        parkingSpot.isNotAvailable = false;
 
 
     }
@@ -42,7 +40,7 @@ public class EntryServiceImpl implements EntyService {
 
         ParkingSpot parkingSpot = vehicle.parkingSpot;
         parkingSpot.vehicle = null;
-        parkingSpot.isAvailable = false;
+        parkingSpot.isNotAvailable = false;
         int checkinTime = vehicle.getCheckin_time();
         vehicle.setCheckout_time(checkout);
         int checkoutTime = vehicle.getCheckout_time();

@@ -17,6 +17,7 @@ public class Level {
             if (i % 2 == 0) {
                 parkingSpot.parkingType(VehicleType.SEDAN);
             }
+            spots.add(parkingSpot);
         }
 
     }

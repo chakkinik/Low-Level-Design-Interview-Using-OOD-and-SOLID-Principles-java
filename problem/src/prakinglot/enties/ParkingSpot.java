@@ -1,10 +1,8 @@
 package prakinglot.enties;
 
-import java.security.PublicKey;
-
 public class ParkingSpot {
     private String id;
-    public boolean isAvailable;
+    public boolean isNotAvailable;
     public Vehicle vehicle;
     private VehicleType parkingType;
 

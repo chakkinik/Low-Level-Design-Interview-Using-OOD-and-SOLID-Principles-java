@@ -2,7 +2,6 @@ package prakinglot.api;
 
 import prakinglot.enties.Level;
 import prakinglot.enties.ParkingSpot;
-import prakinglot.enties.ParkingType;
 import prakinglot.enties.VehicleType;
 
 public class ParkingSpotServiceImpl implements ParkingSpotService{
@@ -13,7 +12,7 @@ public class ParkingSpotServiceImpl implements ParkingSpotService{
 
         for(Level level:instance.spaceDb){
             for (ParkingSpot spot : level.spots) {
-                if(spot.isAvailable && spot.getParkingType().equals(parkingType)){
+                if(spot.isNotAvailable && spot.getParkingType().equals(parkingType)){
                     return spot;
                 }
             }
