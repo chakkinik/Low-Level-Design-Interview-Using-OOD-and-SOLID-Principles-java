@@ -5,26 +5,35 @@ public class PrintHunderNumber {
     private int end=100;
     private int start=0;
 
-    public void printOdd() throws InterruptedException {
+    public synchronized void printOdd()  {
 
         while(start<end){
             if(start%2!=0){
                 System.out.println(start);
-                wait();
+                start++;
+               notify();
             }
-            start++;
+
 
         }
 
     }
 
-    public void printEven() throws InterruptedException {
+    public synchronized void printEven()  {
         while(start<end){
             if(start%2==0){
                 System.out.println(start);
-                wait();
+                start++;
+                try {
+                    wait();
+
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    notify();
+                }
             }
-            start++;
+
 
         }
 
@@ -37,22 +46,14 @@ public class PrintHunderNumber {
         Thread th1 = new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    hunderNumber.printEven();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+               hunderNumber.printEven();
             }
         });
         th1.start();
         Thread th2 = new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    hunderNumber.printOdd();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                hunderNumber.printEven();
             }
         });
         th2.start();
