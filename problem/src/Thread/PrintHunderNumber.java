@@ -2,27 +2,38 @@ package Thread;
 
 public class PrintHunderNumber {
 
-    private int end=100;
-    private int start=0;
+    private int end = 100;
+    private int start = 0;
 
-    public synchronized void printOdd()  {
+    public synchronized void printOdd() {
 
-        while(start<end){
-            if(start%2!=0){
-                System.out.println(start);
+        while (start < end) {
+            notify();
+            //  System.out.println(Thread.currentThread());
+            if (start % 2 != 0) {
+                System.out.println(Thread.currentThread() + "-" + start);
                 start++;
-               notify();
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    this.notify();
+                }
             }
 
 
         }
 
+        System.out.println("printed to end");
+
     }
 
-    public synchronized void printEven()  {
-        while(start<end){
-            if(start%2==0){
-                System.out.println(start);
+    public synchronized void printEven() {
+        while (start < end) {
+            notify();
+            if (start % 2 == 0) {
+                System.out.println(Thread.currentThread() + "-" + start);
                 start++;
                 try {
                     wait();
@@ -30,7 +41,8 @@ public class PrintHunderNumber {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 } finally {
-                    notify();
+
+                     notify();
                 }
             }
 
@@ -46,14 +58,14 @@ public class PrintHunderNumber {
         Thread th1 = new Thread(new Runnable() {
             @Override
             public void run() {
-               hunderNumber.printEven();
+                hunderNumber.printEven();
             }
         });
         th1.start();
         Thread th2 = new Thread(new Runnable() {
             @Override
             public void run() {
-                hunderNumber.printEven();
+                hunderNumber.printOdd();
             }
         });
         th2.start();
