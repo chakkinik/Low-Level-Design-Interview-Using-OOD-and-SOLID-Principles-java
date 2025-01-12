@@ -1,142 +1,93 @@
 package LRU;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
-/*
-
- DFS ..
-
- base /.. 45 45+ 12 =58..
-  base ..
-
-
-
-while put.
-
-if head is null , create node add to head
-
-if head is not null and tail is null
-
-create node add to head
-and make old head as tail
-
-if both not null
-
-then add to head
-where you create node as head
-head next to old head
-old head prev is new head
-
-
-
-similary in get
-
-if get is tail
-tail prev make it new tail
-
-node which we get add to head.
-
-
-
-
-
-
- */
-
 public class LruCache<K, V> implements Cache<K, V> {
 
+    private final Map<K, Node<K, V>> map;
+    private Node<K, V> head;
+    private Node<K, V> tail;
+    private final int capacity;
 
-    Map<K, Node<K, V>> map = new HashMap<>();
-    public Node<K, V> head;
-    public Node<K, V> tail;
-    int size;
-
-    LruCache(int capacity) {
-        this.size = capacity;
+    public LruCache(int capacity) {
+        this.capacity = capacity;
+        this.map = new HashMap<>();
     }
 
     @Override
     public V get(K key) {
-        if (map.get(key) != null) {
-            Node node = map.get(key);
-            if(node.equals(tail)){
-                removeTail();
-
-            }
-            // remove the node and move to head
-            addNodeHead(node);
-            return (V) node.val;
+        if (!map.containsKey(key)) {
+            return null; // Key not found
         }
-
-        return null;
+        Node<K, V> node = map.get(key);
+        moveToHead(node); // Mark as recently used
+        return node.val;
     }
-
-    private void removeTail() {
-        //make new tail
-        Node temp =   tail.prev;
-        temp.next=null;
-        tail=temp;
-    }
-
 
     @Override
     public void put(K key, V val) {
-        // if the first element
-        // here logic
-        Node node = new Node(key, val);
-
-        if (head == null) {
-
-            head = node;
-
-
-        } else if (head != null && tail == null) {
-
-            addNodeHead(node);
-            tail = head.next;
-            tail.prev = head;
-
+        if (map.containsKey(key)) {
+            Node<K, V> node = map.get(key);
+            node.val = val; // Update value
+            moveToHead(node);
         } else {
-            addNodeHead(node);
-
+            if (map.size() >= capacity) {
+                evictTail(); // Evict least recently used item
+            }
+            Node<K, V> newNode = new Node<>(key, val);
+            addToHead(newNode);
+            map.put(key, newNode);
         }
-
-        map.put(key, node);
-
-
     }
 
+    private void addToHead(Node<K, V> node) {
+        node.next = head;
+        node.prev = null;
 
-    private void addNodeHead(Node node) {
-        Node temp = head;
-
-        node.next = temp;
-        temp.prev = node;
+        if (head != null) {
+            head.prev = node;
+        }
         head = node;
 
+        if (tail == null) {
+            tail = head; // If the list was empty
+        }
     }
 
-    private void removeNode(Node node) {
-        if (node == null) return;
-        Node prev = node.prev;
-        Node next = node.next;
-        if (prev == null) {
-            return;
+    private void moveToHead(Node<K, V> node) {
+        removeNode(node);
+        addToHead(node);
+    }
 
+    private void removeNode(Node<K, V> node) {
+        if (node.prev != null) {
+            node.prev.next = node.next;
+        } else {
+            head = node.next; // If node is the head
         }
 
-        prev.next = next;
+        if (node.next != null) {
+            node.next.prev = node.prev;
+        } else {
+            tail = node.prev; // If node is the tail
+        }
+    }
+
+    private void evictTail() {
+        if (tail == null) return;
+
+        map.remove(tail.key);
+        removeNode(tail);
     }
 
     @Override
     public Node<K, V> gethead() {
-        return this.head;
+        return head;
     }
 
     @Override
     public Node<K, V> getTail() {
-        return this.tail;
+        return tail;
     }
 }

@@ -5,6 +5,10 @@ public class Node<K, V> {
     K key;
     V val;
     Node next;
+
+
+
+
     Node prev;
     int rank;
 

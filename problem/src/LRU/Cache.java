@@ -6,8 +6,12 @@ public interface Cache<K, V> {
 
     public void put(K key, V val);
 
-    public Node<K,V> gethead();
+    default Node<K,V> gethead(){
+        return null;
+    }
 
-    public Node<K,V> getTail();
+    default Node<K,V> getTail(){
+        return null;
+    }
 
 }
